@@ -217,7 +217,11 @@ function Library:AddToolTip(InfoStr, HoverInstance)
 		Visible = false,
 	})
 
-	-- Subtle border
+	Library:Create('UICorner', {
+		CornerRadius = UDim.new(0, 6);
+		Parent = Tooltip;
+	});
+
 	Library:Create('UIStroke', {
 		Color = Library.OutlineColor;
 		Thickness = 1;
@@ -449,6 +453,11 @@ do
 			Parent = ToggleLabel;
 		});
 
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 3);
+			Parent = DisplayFrame;
+		});
+
 		Library:Create('UIStroke', {
 			Color = Library.OutlineColor;
 			Thickness = 1;
@@ -475,6 +484,11 @@ do
 			Visible = false;
 			ZIndex = 15;
 			Parent = ScreenGui,
+		});
+
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 8);
+			Parent = PickerFrameOuter;
 		});
 
 		Library:Create('UIStroke', {
@@ -578,6 +592,11 @@ do
 			Parent = PickerFrameInner;
 		});
 
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 4);
+			Parent = HueBoxOuter;
+		});
+
 		Library:Create('UIStroke', {
 			Color = Library.OutlineColor;
 			Thickness = 1;
@@ -610,6 +629,11 @@ do
 			Size = UDim2.new(0.5, -9, 0, 20),
 			ZIndex = 18,
 			Parent = PickerFrameInner;
+		});
+
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 4);
+			Parent = RgbBoxOuter;
 		});
 
 		Library:Create('UIStroke', {
@@ -698,6 +722,11 @@ do
 				Visible = false;
 				Parent = ScreenGui
 			})
+
+			Library:Create('UICorner', {
+				CornerRadius = UDim.new(0, 6);
+				Parent = ContextMenu.Container;
+			});
 
 			Library:Create('UIStroke', {
 				Color = Library.OutlineColor;
@@ -1050,6 +1079,11 @@ do
 			Parent = ToggleLabel;
 		});
 
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 4);
+			Parent = PickOuter;
+		});
+
 		Library:Create('UIStroke', {
 			Color = Library.OutlineColor;
 			Thickness = 1;
@@ -1079,6 +1113,11 @@ do
 			Visible = false;
 			ZIndex = 14;
 			Parent = ScreenGui;
+		});
+
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 6);
+			Parent = ModeSelectOuter;
 		});
 
 		Library:Create('UIStroke', {
@@ -1466,9 +1505,22 @@ do
 				ZIndex = 5;
 			});
 
+			Library:Create('UICorner', {
+				CornerRadius = UDim.new(0, 5);
+				Parent = Outer;
+			});
+
 			Library:Create('UIStroke', {
 				Color = Library.OutlineColor;
 				Thickness = 1;
+				Parent = Outer;
+			});
+
+			Library:Create('UIGradient', {
+				Color = ColorSequence.new({
+					ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 38, 48)),
+					ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 28, 36)),
+				});
 				Parent = Outer;
 			});
 
@@ -1657,6 +1709,11 @@ do
 			Parent = Container;
 		});
 
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 5);
+			Parent = TextBoxOuter;
+		});
+
 		Library:Create('UIStroke', {
 			Color = Library.OutlineColor;
 			Thickness = 1;
@@ -1812,6 +1869,11 @@ do
 			Parent = Container;
 		});
 
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 8);
+			Parent = ToggleTrack;
+		});
+
 		Library:AddToRegistry(ToggleTrack, {
 			BackgroundColor3 = 'OutlineColor';
 		});
@@ -1825,6 +1887,11 @@ do
 			Size = UDim2.new(0, 12, 0, 12);
 			ZIndex = 6;
 			Parent = ToggleTrack;
+		});
+
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 6);
+			Parent = ToggleKnob;
 		});
 
 		local ToggleLabel = Library:CreateLabel({
@@ -2163,9 +2230,22 @@ do
 			Parent = Container;
 		});
 
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 5);
+			Parent = DropdownOuter;
+		});
+
 		Library:Create('UIStroke', {
 			Color = Library.OutlineColor;
 			Thickness = 1;
+			Parent = DropdownOuter;
+		});
+
+		Library:Create('UIGradient', {
+			Color = ColorSequence.new({
+				ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 38, 48)),
+				ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 28, 36)),
+			});
 			Parent = DropdownOuter;
 		});
 
@@ -2216,6 +2296,11 @@ do
 			ZIndex = 20;
 			Visible = false;
 			Parent = ScreenGui;
+		});
+
+		Library:Create('UICorner', {
+			CornerRadius = UDim.new(0, 6);
+			Parent = ListOuter;
 		});
 
 		Library:Create('UIStroke', {
@@ -2643,6 +2728,11 @@ do
 		Parent = ScreenGui;
 	});
 
+	Library:Create('UICorner', {
+		CornerRadius = UDim.new(0, 5);
+		Parent = WatermarkOuter;
+	});
+
 	Library:Create('UIStroke', {
 		Color = Library.OutlineColor;
 		Thickness = 1;
@@ -2691,6 +2781,11 @@ do
 		Visible = false;
 		ZIndex = 100;
 		Parent = ScreenGui;
+	});
+
+	Library:Create('UICorner', {
+		CornerRadius = UDim.new(0, 5);
+		Parent = KeybindOuter;
 	});
 
 	Library:Create('UIStroke', {
@@ -2775,6 +2870,11 @@ function Library:Notify(Text, Time)
 		ClipsDescendants = true;
 		ZIndex = 100;
 		Parent = Library.NotificationArea;
+	});
+
+	Library:Create('UICorner', {
+		CornerRadius = UDim.new(0, 6);
+		Parent = NotifyOuter;
 	});
 
 	Library:Create('UIStroke', {
@@ -2864,6 +2964,11 @@ function Library:CreateWindow(...)
 		Visible = false;
 	});
 
+	Library:Create('UICorner', {
+		CornerRadius = UDim.new(0, 8);
+		Parent = Shadow;
+	});
+
 	local Outer = Library:Create('Frame', {
 		AnchorPoint = Config.AnchorPoint,
 		BackgroundColor3 = Library.MainColor;
@@ -2873,6 +2978,11 @@ function Library:CreateWindow(...)
 		Visible = false;
 		ZIndex = 1;
 		Parent = ScreenGui;
+	});
+
+	Library:Create('UICorner', {
+		CornerRadius = UDim.new(0, 8);
+		Parent = Outer;
 	});
 
 	Library:Create('UIStroke', {
@@ -2940,6 +3050,14 @@ function Library:CreateWindow(...)
 		Parent = Outer;
 	});
 
+	Library:Create('UIGradient', {
+		Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 22, 28)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(16, 16, 20)),
+		});
+		Parent = Body;
+	});
+
 	Library:AddToRegistry(Body, {
 		BackgroundColor3 = 'BackgroundColor';
 	});
@@ -2996,7 +3114,7 @@ function Library:CreateWindow(...)
 			TextSize = 13;
 			ZIndex = 1;
 			Font = Library.FontRegular;
-			TextColor3 = Color3.fromRGB(100, 100, 115);
+			TextColor3 = Color3.fromRGB(160, 160, 180);
 			Parent = TabButton;
 		});
 
@@ -3086,8 +3204,8 @@ function Library:CreateWindow(...)
 
 		function Tab:HideTab()
 			TabUnderline.Visible = false;
-			TabButtonLabel.TextColor3 = Color3.fromRGB(100, 100, 115);
-			Library.RegistryMap[TabButtonLabel].Properties.TextColor3 = Color3.fromRGB(100, 100, 115);
+			TabButtonLabel.TextColor3 = Color3.fromRGB(160, 160, 180);
+			Library.RegistryMap[TabButtonLabel].Properties.TextColor3 = Color3.fromRGB(160, 160, 180);
 			TabFrame.Visible = false;
 		end;
 
@@ -3107,9 +3225,22 @@ function Library:CreateWindow(...)
 				Parent = Info.Side == 1 and LeftSide or RightSide;
 			});
 
+			Library:Create('UICorner', {
+				CornerRadius = UDim.new(0, 8);
+				Parent = BoxOuter;
+			});
+
 			Library:Create('UIStroke', {
 				Color = Library.OutlineColor;
 				Thickness = 1;
+				Parent = BoxOuter;
+			});
+
+			Library:Create('UIGradient', {
+				Color = ColorSequence.new({
+					ColorSequenceKeypoint.new(0, Color3.fromRGB(34, 34, 42)),
+					ColorSequenceKeypoint.new(1, Color3.fromRGB(26, 26, 34)),
+				});
 				Parent = BoxOuter;
 			});
 
@@ -3255,7 +3386,7 @@ function Library:CreateWindow(...)
 					TextSize = 12;
 					Text = Name;
 					TextXAlignment = Enum.TextXAlignment.Center;
-					TextColor3 = Color3.fromRGB(100, 100, 115);
+					TextColor3 = Color3.fromRGB(160, 160, 180);
 					ZIndex = 7;
 					Font = Library.FontRegular;
 					Parent = Button;
@@ -3309,8 +3440,8 @@ function Library:CreateWindow(...)
 					Container.Visible = false;
 					SubUnderline.Visible = false;
 
-					ButtonLabel.TextColor3 = Color3.fromRGB(100, 100, 115);
-					Library.RegistryMap[ButtonLabel].Properties.TextColor3 = Color3.fromRGB(100, 100, 115);
+					ButtonLabel.TextColor3 = Color3.fromRGB(160, 160, 180);
+					Library.RegistryMap[ButtonLabel].Properties.TextColor3 = Color3.fromRGB(160, 160, 180);
 				end;
 
 				function Tab:Resize()
