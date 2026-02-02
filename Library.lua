@@ -9,7 +9,6 @@ local RenderStepped = RunService.RenderStepped;
 local LocalPlayer = Players.LocalPlayer;
 local Mouse = LocalPlayer:GetMouse();
 
-local ProtectGui = protectgui or (syn and syn.protect_gui) or (function() end);
 
 local ScreenGui = Instance.new('ScreenGui');
 gethui(ScreenGui);
@@ -235,7 +234,12 @@ function Library:AddToolTip(InfoStr, HoverInstance)
         IsHovering = true
 
         Tooltip.Position = UDim2.fromOffset(Mouse.X + 15, Mouse.Y + 12)
+        Tooltip.BackgroundTransparency = 1
+        Label.TextTransparency = 1
         Tooltip.Visible = true
+        
+        Library:Tween(Tooltip, { BackgroundTransparency = 0 }, 0.15);
+        Library:Tween(Label, { TextTransparency = 0 }, 0.15);
 
         while IsHovering do
             RunService.Heartbeat:Wait()
@@ -245,6 +249,9 @@ function Library:AddToolTip(InfoStr, HoverInstance)
 
     HoverInstance.MouseLeave:Connect(function()
         IsHovering = false
+        Library:Tween(Tooltip, { BackgroundTransparency = 1 }, 0.1);
+        Library:Tween(Label, { TextTransparency = 1 }, 0.1);
+        task.wait(0.1);
         Tooltip.Visible = false
     end)
 end
@@ -330,6 +337,33 @@ function Library:AddCorner(Instance, Radius)
         CornerRadius = UDim.new(0, Radius or 4);
         Parent = Instance;
     });
+end;
+
+function Library:AddShadow(Instance, Transparency)
+    local Shadow = Library:Create('UIStroke', {
+        Color = Color3.new(0, 0, 0);
+        Thickness = 1;
+        Transparency = Transparency or 0.7;
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
+        Parent = Instance;
+    });
+    return Shadow;
+end;
+
+function Library:AddDropShadow(Instance)
+    local Shadow = Library:Create('ImageLabel', {
+        BackgroundTransparency = 1;
+        Position = UDim2.new(0, -15, 0, -15);
+        Size = UDim2.new(1, 30, 1, 30);
+        ZIndex = Instance.ZIndex - 1;
+        Image = 'rbxassetid://297694203';
+        ImageColor3 = Color3.new(0, 0, 0);
+        ImageTransparency = 0.5;
+        ScaleType = Enum.ScaleType.Slice;
+        SliceCenter = Rect.new(95, 95, 105, 105);
+        Parent = Instance.Parent;
+    });
+    return Shadow;
 end;
 
 function Library:AddToRegistry(Instance, Properties, IsHud)
@@ -1507,6 +1541,15 @@ do
                 { BorderColor3 = 'Black' }
             );
 
+            -- Add hover scale animation
+            Outer.MouseEnter:Connect(function()
+                Library:Tween(Inner, { Size = UDim2.new(1, 0, 1, 2) }, 0.1);
+            end);
+
+            Outer.MouseLeave:Connect(function()
+                Library:Tween(Inner, { Size = UDim2.new(1, 0, 1, 0) }, 0.1);
+            end);
+
             return Outer, Inner, Label
         end
 
@@ -1924,6 +1967,15 @@ do
             { BorderColor3 = 'Black' }
         );
 
+        -- Add subtle hover scale effect
+        ToggleRegion.MouseEnter:Connect(function()
+            Library:Tween(ToggleInner, { Size = UDim2.new(1, 1, 1, 1) }, 0.1);
+        end);
+
+        ToggleRegion.MouseLeave:Connect(function()
+            Library:Tween(ToggleInner, { Size = UDim2.new(1, 0, 1, 0) }, 0.1);
+        end);
+
         function Toggle:UpdateColors()
             Toggle:Display();
         end;
@@ -2163,6 +2215,9 @@ do
                 local gPos = Fill.Size.X.Offset;
                 local Diff = mPos - (Fill.AbsolutePosition.X + gPos);
 
+                -- Add glow effect while dragging
+                Library:Tween(Fill, { BackgroundColor3 = Library.FontColor }, 0.1);
+
                 while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
                     local nMPos = Mouse.X;
                     local nX = math.clamp(gPos + (nMPos - mPos) + Diff, 0, Slider.MaxSize);
@@ -2180,6 +2235,9 @@ do
 
                     RenderStepped:Wait();
                 end;
+
+                -- Remove glow effect
+                Library:Tween(Fill, { BackgroundColor3 = Library.AccentColor }, 0.2);
 
                 Library:AttemptSave();
             end;
@@ -2543,13 +2601,13 @@ do
         function Dropdown:OpenDropdown()
             ListOuter.Visible = true;
             Library.OpenedFrames[ListOuter] = true;
-            DropdownArrow.Rotation = 180;
+            Library:Tween(DropdownArrow, { Rotation = 180 }, 0.2);
         end;
 
         function Dropdown:CloseDropdown()
             ListOuter.Visible = false;
             Library.OpenedFrames[ListOuter] = nil;
-            DropdownArrow.Rotation = 0;
+            Library:Tween(DropdownArrow, { Rotation = 0 }, 0.2);
         end;
 
         function Dropdown:OnChanged(Func)
@@ -2985,6 +3043,17 @@ function Library:Notify(Text, Time)
         BackgroundColor3 = 'AccentColor';
     }, true);
 
+    -- Subtle pulse animation on accent bar
+    task.spawn(function()
+        local pulse = true
+        while NotifyOuter.Parent and pulse do
+            Library:Tween(LeftColor, { Size = UDim2.new(0, 4, 1, 2) }, 0.6);
+            task.wait(0.6);
+            Library:Tween(LeftColor, { Size = UDim2.new(0, 3, 1, 2) }, 0.6);
+            task.wait(0.6);
+        end
+    end);
+
     pcall(NotifyOuter.TweenSize, NotifyOuter, UDim2.new(0, XSize + 8 + 4, 0, YSize), 'Out', 'Quad', 0.4, true);
 
     task.spawn(function()
@@ -3037,6 +3106,7 @@ function Library:CreateWindow(...)
     });
 
     Library:AddCorner(Outer, 6);
+    Library:AddShadow(Outer, 0.3);
     Library:MakeDraggable(Outer, 25);
 
     local Inner = Library:Create('Frame', {
@@ -3050,6 +3120,19 @@ function Library:CreateWindow(...)
     });
 
     Library:AddCorner(Inner, 5);
+
+    -- Add accent glow to border
+    local AccentGlow = Library:Create('UIStroke', {
+        Color = Library.AccentColor;
+        Thickness = 1.5;
+        Transparency = 0.5;
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
+        Parent = Inner;
+    });
+
+    Library:AddToRegistry(AccentGlow, {
+        Color = 'AccentColor';
+    });
 
     Library:AddToRegistry(Inner, {
         BackgroundColor3 = 'MainColor';
@@ -3291,6 +3374,20 @@ function Library:CreateWindow(...)
 
             Library:AddToRegistry(BoxInner, {
                 BackgroundColor3 = 'BackgroundColor';
+            });
+
+            -- Add subtle gradient overlay
+            Library:Create('UIGradient', {
+                Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+                    ColorSequenceKeypoint.new(1, Color3.fromRGB(240, 240, 250))
+                });
+                Transparency = NumberSequence.new({
+                    NumberSequenceKeypoint.new(0, 0.98),
+                    NumberSequenceKeypoint.new(1, 0.95)
+                });
+                Rotation = 90;
+                Parent = BoxInner;
             });
 
             local Highlight = Library:Create('Frame', {
