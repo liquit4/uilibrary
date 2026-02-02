@@ -2178,11 +2178,13 @@ do
 
         Library:AddCorner(Fill, 4);
 
-        -- Add animated gradient to slider fill
+        -- Add animated gradient to slider fill (more prominent)
         local FillGradient = Library:Create('UIGradient', {
             Color = ColorSequence.new({
                 ColorSequenceKeypoint.new(0, Library.AccentColor),
-                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 150, 255)),
+                ColorSequenceKeypoint.new(0.3, Color3.fromRGB(220, 190, 255)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 220, 255)),
+                ColorSequenceKeypoint.new(0.7, Color3.fromRGB(220, 190, 255)),
                 ColorSequenceKeypoint.new(1, Library.AccentColor)
             });
             Offset = Vector2.new(-1, 0);
@@ -3256,14 +3258,34 @@ function Library:CreateWindow(...)
         Parent = Inner;
     });
 
-    -- Smooth pulse animation for the outline
+    -- Add animated gradient to outline
+    local OutlineGradient = Library:Create('UIGradient', {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Library.AccentColor),
+            ColorSequenceKeypoint.new(0.25, Color3.fromRGB(200, 170, 255)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 200, 255)),
+            ColorSequenceKeypoint.new(0.75, Color3.fromRGB(200, 170, 255)),
+            ColorSequenceKeypoint.new(1, Library.AccentColor)
+        });
+        Rotation = 0;
+        Parent = AccentOutline;
+    });
+
+    -- Smooth pulse and rotation animation for the outline
     task.spawn(function()
         while AccentOutline and AccentOutline.Parent do
-            Library:Tween(AccentOutline, { Thickness = 2.8, Transparency = 0.3 }, 1.5);
+            -- Pulse thickness
+            Library:Tween(AccentOutline, { Thickness = 2.8, Transparency = 0.2 }, 1.5);
+            -- Rotate gradient
+            Library:Tween(OutlineGradient, { Rotation = 360 }, 8);
             task.wait(1.5);
             if not AccentOutline or not AccentOutline.Parent then break end
             Library:Tween(AccentOutline, { Thickness = 2, Transparency = 0 }, 1.5);
             task.wait(1.5);
+            -- Reset rotation for continuous loop
+            if OutlineGradient and OutlineGradient.Parent then
+                OutlineGradient.Rotation = 0;
+            end
         end
     end);
 
