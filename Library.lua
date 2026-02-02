@@ -545,6 +545,25 @@ do
             Parent = PickerFrameInner;
         });
 
+        -- Add animated gradient
+        local PickerHighlightGradient = Library:Create('UIGradient', {
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Library.AccentColor),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 150, 255)),
+                ColorSequenceKeypoint.new(1, Library.AccentColor)
+            });
+            Offset = Vector2.new(-1, 0);
+            Parent = Highlight;
+        });
+
+        task.spawn(function()
+            while Highlight.Parent do
+                Library:Tween(PickerHighlightGradient, { Offset = Vector2.new(1, 0) }, 2);
+                task.wait(2);
+                PickerHighlightGradient.Offset = Vector2.new(-1, 0);
+            end
+        end);
+
         local SatVibMapOuter = Library:Create('Frame', {
             BorderColor3 = Color3.new(0, 0, 0);
             Position = UDim2.new(0, 4, 0, 25);
@@ -1518,7 +1537,7 @@ do
                 Parent = Inner;
             });
 
-            Library:Create('UIGradient', {
+            local ButtonGradient = Library:Create('UIGradient', {
                 Color = ColorSequence.new({
                     ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
                     ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 212, 212))
@@ -1526,6 +1545,16 @@ do
                 Rotation = 90;
                 Parent = Inner;
             });
+
+            -- Subtle gradient animation on button
+            task.spawn(function()
+                local offset = 0
+                while Inner.Parent do
+                    ButtonGradient.Offset = Vector2.new(math.sin(offset) * 0.1, 0)
+                    offset = offset + 0.05
+                    task.wait(0.05)
+                end
+            end);
 
             Library:AddToRegistry(Outer, {
                 BorderColor3 = 'Black';
@@ -2117,6 +2146,25 @@ do
         });
 
         Library:AddCorner(Fill, 4);
+
+        -- Add animated gradient to slider fill
+        local FillGradient = Library:Create('UIGradient', {
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Library.AccentColor),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 150, 255)),
+                ColorSequenceKeypoint.new(1, Library.AccentColor)
+            });
+            Offset = Vector2.new(-1, 0);
+            Parent = Fill;
+        });
+
+        task.spawn(function()
+            while Fill.Parent do
+                Library:Tween(FillGradient, { Offset = Vector2.new(1, 0) }, 3);
+                task.wait(3);
+                FillGradient.Offset = Vector2.new(-1, 0);
+            end
+        end);
 
         Library:AddToRegistry(Fill, {
             BackgroundColor3 = 'AccentColor';
@@ -2911,6 +2959,25 @@ do
         Parent = KeybindInner;
     });
 
+    -- Add animated gradient to keybind accent bar
+    local KeybindGradient = Library:Create('UIGradient', {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Library.AccentColor),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 150, 255)),
+            ColorSequenceKeypoint.new(1, Library.AccentColor)
+        });
+        Offset = Vector2.new(-1, 0);
+        Parent = ColorFrame;
+    });
+
+    task.spawn(function()
+        while ColorFrame.Parent do
+            Library:Tween(KeybindGradient, { Offset = Vector2.new(1, 0) }, 2);
+            task.wait(2);
+            KeybindGradient.Offset = Vector2.new(-1, 0);
+        end
+    end);
+
     Library:AddToRegistry(ColorFrame, {
         BackgroundColor3 = 'AccentColor';
     }, true);
@@ -3039,18 +3106,32 @@ function Library:Notify(Text, Time)
         Parent = NotifyOuter;
     });
 
+    -- Add animated gradient to notification bar
+    local NotifyBarGradient = Library:Create('UIGradient', {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Library.AccentColor),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(200, 170, 255)),
+            ColorSequenceKeypoint.new(1, Library.AccentColor)
+        });
+        Rotation = 90;
+        Offset = Vector2.new(0, -1);
+        Parent = LeftColor;
+    });
+
     Library:AddToRegistry(LeftColor, {
         BackgroundColor3 = 'AccentColor';
     }, true);
 
-    -- Subtle pulse animation on accent bar
+    -- Subtle pulse and gradient animation on accent bar
     task.spawn(function()
         local pulse = true
         while NotifyOuter.Parent and pulse do
             Library:Tween(LeftColor, { Size = UDim2.new(0, 4, 1, 2) }, 0.6);
+            Library:Tween(NotifyBarGradient, { Offset = Vector2.new(0, 1) }, 1.2);
             task.wait(0.6);
             Library:Tween(LeftColor, { Size = UDim2.new(0, 3, 1, 2) }, 0.6);
             task.wait(0.6);
+            NotifyBarGradient.Offset = Vector2.new(0, -1);
         end
     end);
 
@@ -3129,6 +3210,28 @@ function Library:CreateWindow(...)
         ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
         Parent = Inner;
     });
+
+    -- Animate the outline with rainbow gradient
+    local GlowGradient = Library:Create('UIGradient', {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(147, 112, 219)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 200, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(147, 112, 219))
+        });
+        Rotation = 0;
+        Parent = AccentGlow;
+    });
+
+    -- Animate gradient rotation
+    task.spawn(function()
+        while AccentGlow.Parent do
+            for i = 0, 360, 2 do
+                if not AccentGlow.Parent then break end
+                GlowGradient.Rotation = i
+                task.wait(0.03)
+            end
+        end
+    end);
 
     Library:AddToRegistry(AccentGlow, {
         Color = 'AccentColor';
@@ -3397,6 +3500,26 @@ function Library:CreateWindow(...)
                 ZIndex = 5;
                 Parent = BoxInner;
             });
+
+            -- Add animated gradient to highlight bar
+            local HighlightGradient = Library:Create('UIGradient', {
+                Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Library.AccentColor),
+                    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(180, 150, 255)),
+                    ColorSequenceKeypoint.new(1, Library.AccentColor)
+                });
+                Offset = Vector2.new(-1, 0);
+                Parent = Highlight;
+            });
+
+            -- Animate the gradient
+            task.spawn(function()
+                while Highlight.Parent do
+                    Library:Tween(HighlightGradient, { Offset = Vector2.new(1, 0) }, 2);
+                    task.wait(2);
+                    HighlightGradient.Offset = Vector2.new(-1, 0);
+                end
+            end);
 
             Library:AddToRegistry(Highlight, {
                 BackgroundColor3 = 'AccentColor';
