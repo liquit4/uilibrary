@@ -234,12 +234,17 @@ function Library:AddToolTip(InfoStr, HoverInstance)
         IsHovering = true
 
         Tooltip.Position = UDim2.fromOffset(Mouse.X + 15, Mouse.Y + 12)
-        Tooltip.BackgroundTransparency = 1
-        Label.TextTransparency = 1
         Tooltip.Visible = true
         
-        Library:Tween(Tooltip, { BackgroundTransparency = 0 }, 0.25);
-        Library:Tween(Label, { TextTransparency = 0 }, 0.25);
+        -- Fade in entire tooltip smoothly
+        for i = 1, 0, -0.05 do
+            if not IsHovering then break end
+            Tooltip.BackgroundTransparency = i
+            Label.TextTransparency = i
+            RunService.Heartbeat:Wait()
+        end
+        Tooltip.BackgroundTransparency = 0
+        Label.TextTransparency = 0
 
         while IsHovering do
             RunService.Heartbeat:Wait()
@@ -249,9 +254,14 @@ function Library:AddToolTip(InfoStr, HoverInstance)
 
     HoverInstance.MouseLeave:Connect(function()
         IsHovering = false
-        Library:Tween(Tooltip, { BackgroundTransparency = 1 }, 0.2);
-        Library:Tween(Label, { TextTransparency = 1 }, 0.2);
-        task.wait(0.2);
+        
+        -- Fade out entire tooltip smoothly
+        for i = 0, 1, 0.05 do
+            Tooltip.BackgroundTransparency = i
+            Label.TextTransparency = i
+            RunService.Heartbeat:Wait()
+        end
+        
         Tooltip.Visible = false
     end)
 end
@@ -913,21 +923,22 @@ do
 
         function ColorPicker:Display()
             ColorPicker.Value = Color3.fromHSV(ColorPicker.Hue, ColorPicker.Sat, ColorPicker.Vib);
-            SatVibMap.BackgroundColor3 = Color3.fromHSV(ColorPicker.Hue, 1, 1);
+            Library:Tween(SatVibMap, { BackgroundColor3 = Color3.fromHSV(ColorPicker.Hue, 1, 1) }, 0.1);
 
-            Library:Create(DisplayFrame, {
+            Library:Tween(DisplayFrame, {
                 BackgroundColor3 = ColorPicker.Value;
                 BackgroundTransparency = ColorPicker.Transparency;
-                BorderColor3 = Library:GetDarkerColor(ColorPicker.Value);
-            });
+            }, 0.1);
+            
+            DisplayFrame.BorderColor3 = Library:GetDarkerColor(ColorPicker.Value);
 
             if TransparencyBoxInner then
-                TransparencyBoxInner.BackgroundColor3 = ColorPicker.Value;
-                TransparencyCursor.Position = UDim2.new(1 - ColorPicker.Transparency, 0, 0, 0);
+                Library:Tween(TransparencyBoxInner, { BackgroundColor3 = ColorPicker.Value }, 0.1);
+                Library:Tween(TransparencyCursor, { Position = UDim2.new(1 - ColorPicker.Transparency, 0, 0, 0) }, 0.1);
             end;
 
-            CursorOuter.Position = UDim2.new(ColorPicker.Sat, 0, 1 - ColorPicker.Vib, 0);
-            HueCursor.Position = UDim2.new(0, 0, ColorPicker.Hue, 0);
+            Library:Tween(CursorOuter, { Position = UDim2.new(ColorPicker.Sat, 0, 1 - ColorPicker.Vib, 0) }, 0.08);
+            Library:Tween(HueCursor, { Position = UDim2.new(0, 0, ColorPicker.Hue, 0) }, 0.08);
 
             HueBox.Text = '#' .. ColorPicker.Value:ToHex()
             RgbBox.Text = table.concat({ math.floor(ColorPicker.Value.R * 255), math.floor(ColorPicker.Value.G * 255), math.floor(ColorPicker.Value.B * 255) }, ', ')
@@ -1238,7 +1249,11 @@ do
             ContainerLabel.Text = string.format('[%s] %s (%s)', KeyPicker.Value, Info.Text, KeyPicker.Mode);
 
             ContainerLabel.Visible = true;
-            ContainerLabel.TextColor3 = State and Library.AccentColor or Library.FontColor;
+            
+            -- Smooth color transition
+            Library:Tween(ContainerLabel, { 
+                TextColor3 = State and Library.AccentColor or Library.FontColor 
+            }, 0.2);
 
             Library.RegistryMap[ContainerLabel].Properties.TextColor3 = State and 'AccentColor' or 'FontColor';
 
@@ -1254,7 +1269,10 @@ do
                 end;
             end;
 
-            Library.KeybindFrame.Size = UDim2.new(0, math.max(XSize + 10, 210), 0, YSize + 23)
+            -- Smooth size transition
+            Library:Tween(Library.KeybindFrame, { 
+                Size = UDim2.new(0, math.max(XSize + 10, 210), 0, YSize + 23) 
+            }, 0.2);
         end;
 
         function KeyPicker:GetState()
@@ -1790,6 +1808,15 @@ do
             { BorderColor3 = 'AccentColor' },
             { BorderColor3 = 'Black' }
         );
+
+        -- Add smooth focus animation
+        Box.Focused:Connect(function()
+            Library:Tween(TextBoxInner, { BackgroundColor3 = Library:GetDarkerColor(Library.MainColor) }, 0.2);
+        end);
+
+        Box.FocusLost:Connect(function()
+            Library:Tween(TextBoxInner, { BackgroundColor3 = Library.MainColor }, 0.2);
+        end);
 
         if type(Info.Tooltip) == 'string' then
             Library:AddToolTip(Info.Tooltip, TextBoxOuter)
@@ -2652,14 +2679,28 @@ do
 
         function Dropdown:OpenDropdown()
             ListOuter.Visible = true;
+            ListOuter.BackgroundTransparency = 1;
+            ListInner.BackgroundTransparency = 1;
+            
+            -- Smooth fade in
+            Library:Tween(ListOuter, { BackgroundTransparency = 0 }, 0.15);
+            Library:Tween(ListInner, { BackgroundTransparency = 0 }, 0.15);
+            
             Library.OpenedFrames[ListOuter] = true;
-            Library:Tween(DropdownArrow, { Rotation = 180 }, 0.2);
+            Library:Tween(DropdownArrow, { Rotation = 180 }, 0.25);
         end;
 
         function Dropdown:CloseDropdown()
-            ListOuter.Visible = false;
+            -- Smooth fade out
+            Library:Tween(ListOuter, { BackgroundTransparency = 1 }, 0.15);
+            Library:Tween(ListInner, { BackgroundTransparency = 1 }, 0.15);
+            Library:Tween(DropdownArrow, { Rotation = 0 }, 0.25);
+            
+            task.delay(0.15, function()
+                ListOuter.Visible = false;
+            end);
+            
             Library.OpenedFrames[ListOuter] = nil;
-            Library:Tween(DropdownArrow, { Rotation = 0 }, 0.2);
         end;
 
         function Dropdown:OnChanged(Func)
@@ -3437,17 +3478,26 @@ function Library:CreateWindow(...)
                 Tab:HideTab();
             end;
 
-            Blocker.BackgroundTransparency = 0;
-            TabButton.BackgroundColor3 = Library.MainColor;
+            Library:Tween(Blocker, { BackgroundTransparency = 0 }, 0.2);
+            Library:Tween(TabButton, { BackgroundColor3 = Library.MainColor }, 0.2);
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'MainColor';
+            
+            -- Fade in tab content
             TabFrame.Visible = true;
+            TabFrame.BackgroundTransparency = 1;
+            Library:Tween(TabFrame, { BackgroundTransparency = 0 }, 0.15);
         end;
 
         function Tab:HideTab()
-            Blocker.BackgroundTransparency = 1;
-            TabButton.BackgroundColor3 = Library.BackgroundColor;
+            Library:Tween(Blocker, { BackgroundTransparency = 1 }, 0.2);
+            Library:Tween(TabButton, { BackgroundColor3 = Library.BackgroundColor }, 0.2);
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'BackgroundColor';
-            TabFrame.Visible = false;
+            
+            -- Fade out tab content
+            Library:Tween(TabFrame, { BackgroundTransparency = 1 }, 0.15);
+            task.delay(0.15, function()
+                TabFrame.Visible = false;
+            end);
         end;
 
         function Tab:SetLayoutOrder(Position)
