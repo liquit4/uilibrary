@@ -238,8 +238,8 @@ function Library:AddToolTip(InfoStr, HoverInstance)
         Label.TextTransparency = 1
         Tooltip.Visible = true
         
-        Library:Tween(Tooltip, { BackgroundTransparency = 0 }, 0.15);
-        Library:Tween(Label, { TextTransparency = 0 }, 0.15);
+        Library:Tween(Tooltip, { BackgroundTransparency = 0 }, 0.25);
+        Library:Tween(Label, { TextTransparency = 0 }, 0.25);
 
         while IsHovering do
             RunService.Heartbeat:Wait()
@@ -249,9 +249,9 @@ function Library:AddToolTip(InfoStr, HoverInstance)
 
     HoverInstance.MouseLeave:Connect(function()
         IsHovering = false
-        Library:Tween(Tooltip, { BackgroundTransparency = 1 }, 0.1);
-        Library:Tween(Label, { TextTransparency = 1 }, 0.1);
-        task.wait(0.1);
+        Library:Tween(Tooltip, { BackgroundTransparency = 1 }, 0.2);
+        Library:Tween(Label, { TextTransparency = 1 }, 0.2);
+        task.wait(0.2);
         Tooltip.Visible = false
     end)
 end
@@ -1570,13 +1570,15 @@ do
                 { BorderColor3 = 'Black' }
             );
 
-            -- Add hover scale animation
+            -- Add smooth hover animation
             Outer.MouseEnter:Connect(function()
-                Library:Tween(Inner, { Size = UDim2.new(1, 0, 1, 2) }, 0.1);
+                Library:Tween(Inner, { Size = UDim2.new(1, 0, 1, 2) }, 0.2);
+                Library:Tween(Outer, { BackgroundTransparency = 0.7 }, 0.2);
             end);
 
             Outer.MouseLeave:Connect(function()
-                Library:Tween(Inner, { Size = UDim2.new(1, 0, 1, 0) }, 0.1);
+                Library:Tween(Inner, { Size = UDim2.new(1, 0, 1, 0) }, 0.2);
+                Library:Tween(Outer, { BackgroundTransparency = 1 }, 0.2);
             end);
 
             return Outer, Inner, Label
@@ -1996,13 +1998,15 @@ do
             { BorderColor3 = 'Black' }
         );
 
-        -- Add subtle hover scale effect
+        -- Add smooth hover effect
         ToggleRegion.MouseEnter:Connect(function()
-            Library:Tween(ToggleInner, { Size = UDim2.new(1, 1, 1, 1) }, 0.1);
+            Library:Tween(ToggleInner, { Size = UDim2.new(1, 1, 1, 1) }, 0.2);
+            Library:Tween(ToggleOuter, { BackgroundTransparency = 0.95 }, 0.2);
         end);
 
         ToggleRegion.MouseLeave:Connect(function()
-            Library:Tween(ToggleInner, { Size = UDim2.new(1, 0, 1, 0) }, 0.1);
+            Library:Tween(ToggleInner, { Size = UDim2.new(1, 0, 1, 0) }, 0.2);
+            Library:Tween(ToggleOuter, { BackgroundTransparency = 1 }, 0.2);
         end);
 
         function Toggle:UpdateColors()
@@ -2017,7 +2021,7 @@ do
             Library:Tween(ToggleInner, {
                 BackgroundColor3 = Toggle.Value and Library.AccentColor or Library.MainColor;
                 BorderColor3 = Toggle.Value and Library.AccentColorDark or Library.OutlineColor;
-            }, 0.15);
+            }, 0.25);
 
             Library.RegistryMap[ToggleInner].Properties.BackgroundColor3 = Toggle.Value and 'AccentColor' or 'MainColor';
             Library.RegistryMap[ToggleInner].Properties.BorderColor3 = Toggle.Value and 'AccentColorDark' or 'OutlineColor';
@@ -2263,8 +2267,8 @@ do
                 local gPos = Fill.Size.X.Offset;
                 local Diff = mPos - (Fill.AbsolutePosition.X + gPos);
 
-                -- Add glow effect while dragging
-                Library:Tween(Fill, { BackgroundColor3 = Library.FontColor }, 0.1);
+                -- Add smooth glow effect while dragging
+                Library:Tween(Fill, { BackgroundColor3 = Library.FontColor }, 0.15);
 
                 while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
                     local nMPos = Mouse.X;
@@ -2284,8 +2288,8 @@ do
                     RenderStepped:Wait();
                 end;
 
-                -- Remove glow effect
-                Library:Tween(Fill, { BackgroundColor3 = Library.AccentColor }, 0.2);
+                -- Remove glow effect smoothly
+                Library:Tween(Fill, { BackgroundColor3 = Library.AccentColor }, 0.3);
 
                 Library:AttemptSave();
             end;
@@ -3122,27 +3126,27 @@ function Library:Notify(Text, Time)
         BackgroundColor3 = 'AccentColor';
     }, true);
 
-    -- Subtle pulse and gradient animation on accent bar
+    -- Smooth pulse and gradient animation on accent bar
     task.spawn(function()
         local pulse = true
         while NotifyOuter.Parent and pulse do
-            Library:Tween(LeftColor, { Size = UDim2.new(0, 4, 1, 2) }, 0.6);
-            Library:Tween(NotifyBarGradient, { Offset = Vector2.new(0, 1) }, 1.2);
-            task.wait(0.6);
-            Library:Tween(LeftColor, { Size = UDim2.new(0, 3, 1, 2) }, 0.6);
-            task.wait(0.6);
+            Library:Tween(LeftColor, { Size = UDim2.new(0, 4, 1, 2) }, 0.8);
+            Library:Tween(NotifyBarGradient, { Offset = Vector2.new(0, 1) }, 1.6);
+            task.wait(0.8);
+            Library:Tween(LeftColor, { Size = UDim2.new(0, 3, 1, 2) }, 0.8);
+            task.wait(0.8);
             NotifyBarGradient.Offset = Vector2.new(0, -1);
         end
     end);
 
-    pcall(NotifyOuter.TweenSize, NotifyOuter, UDim2.new(0, XSize + 8 + 4, 0, YSize), 'Out', 'Quad', 0.4, true);
+    pcall(NotifyOuter.TweenSize, NotifyOuter, UDim2.new(0, XSize + 8 + 4, 0, YSize), 'Out', 'Quad', 0.5, true);
 
     task.spawn(function()
         wait(Time or 5);
 
-        pcall(NotifyOuter.TweenSize, NotifyOuter, UDim2.new(0, 0, 0, YSize), 'Out', 'Quad', 0.4, true);
+        pcall(NotifyOuter.TweenSize, NotifyOuter, UDim2.new(0, 0, 0, YSize), 'Out', 'Quad', 0.5, true);
 
-        wait(0.4);
+        wait(0.5);
 
         NotifyOuter:Destroy();
     end);
@@ -3211,13 +3215,14 @@ function Library:CreateWindow(...)
         Parent = Inner;
     });
 
-    -- Pulse animation for the outline
+    -- Smooth pulse animation for the outline
     task.spawn(function()
-        while AccentOutline.Parent do
-            Library:Tween(AccentOutline, { Thickness = 2.5, Transparency = 0.2 }, 1);
-            task.wait(1);
-            Library:Tween(AccentOutline, { Thickness = 2, Transparency = 0 }, 1);
-            task.wait(1);
+        while AccentOutline and AccentOutline.Parent do
+            Library:Tween(AccentOutline, { Thickness = 2.8, Transparency = 0.3 }, 1.5);
+            task.wait(1.5);
+            if not AccentOutline or not AccentOutline.Parent then break end
+            Library:Tween(AccentOutline, { Thickness = 2, Transparency = 0 }, 1.5);
+            task.wait(1.5);
         end
     end);
 
@@ -3322,7 +3327,25 @@ function Library:CreateWindow(...)
             Parent = TabArea;
         });
 
-        Library:AddCorner(TabButton, 4);
+        -- Only round top corners of tab buttons
+        local TabCorner = Library:Create('UICorner', {
+            CornerRadius = UDim.new(0, 6);
+            Parent = TabButton;
+        });
+        
+        -- Hide bottom corners by adding a frame
+        local CornerBlocker = Library:Create('Frame', {
+            BackgroundColor3 = Library.BackgroundColor;
+            BorderSizePixel = 0;
+            Position = UDim2.new(0, 0, 0.7, 0);
+            Size = UDim2.new(1, 0, 0.3, 0);
+            ZIndex = 1;
+            Parent = TabButton;
+        });
+        
+        Library:AddToRegistry(CornerBlocker, {
+            BackgroundColor3 = 'BackgroundColor';
+        });
 
         Library:AddToRegistry(TabButton, {
             BackgroundColor3 = 'BackgroundColor';
