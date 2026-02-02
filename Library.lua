@@ -3202,38 +3202,26 @@ function Library:CreateWindow(...)
 
     Library:AddCorner(Inner, 5);
 
-    -- Add accent glow to border
-    local AccentGlow = Library:Create('UIStroke', {
+    -- Add accent outline to window
+    local AccentOutline = Library:Create('UIStroke', {
         Color = Library.AccentColor;
-        Thickness = 1.5;
-        Transparency = 0.5;
+        Thickness = 2;
+        Transparency = 0;
         ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
         Parent = Inner;
     });
 
-    -- Animate the outline with rainbow gradient
-    local GlowGradient = Library:Create('UIGradient', {
-        Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(147, 112, 219)),
-            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 200, 255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(147, 112, 219))
-        });
-        Rotation = 0;
-        Parent = AccentGlow;
-    });
-
-    -- Animate gradient rotation
+    -- Pulse animation for the outline
     task.spawn(function()
-        while AccentGlow.Parent do
-            for i = 0, 360, 2 do
-                if not AccentGlow.Parent then break end
-                GlowGradient.Rotation = i
-                task.wait(0.03)
-            end
+        while AccentOutline.Parent do
+            Library:Tween(AccentOutline, { Thickness = 2.5, Transparency = 0.2 }, 1);
+            task.wait(1);
+            Library:Tween(AccentOutline, { Thickness = 2, Transparency = 0 }, 1);
+            task.wait(1);
         end
     end);
 
-    Library:AddToRegistry(AccentGlow, {
+    Library:AddToRegistry(AccentOutline, {
         Color = 'AccentColor';
     });
 
