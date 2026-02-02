@@ -1809,15 +1809,6 @@ do
             { BorderColor3 = 'Black' }
         );
 
-        -- Add smooth focus animation
-        Box.Focused:Connect(function()
-            Library:Tween(TextBoxInner, { BackgroundColor3 = Library:GetDarkerColor(Library.MainColor) }, 0.2);
-        end);
-
-        Box.FocusLost:Connect(function()
-            Library:Tween(TextBoxInner, { BackgroundColor3 = Library.MainColor }, 0.2);
-        end);
-
         if type(Info.Tooltip) == 'string' then
             Library:AddToolTip(Info.Tooltip, TextBoxOuter)
         end
@@ -1863,6 +1854,15 @@ do
         });
 
         Library:ApplyTextStroke(Box);
+
+        -- Add smooth focus animation
+        Box.Focused:Connect(function()
+            Library:Tween(TextBoxInner, { BackgroundColor3 = Library:GetDarkerColor(Library.MainColor) }, 0.2);
+        end);
+
+        Box.FocusLost:Connect(function()
+            Library:Tween(TextBoxInner, { BackgroundColor3 = Library.MainColor }, 0.2);
+        end);
 
         function Textbox:SetValue(Text)
             if Info.MaxLength and #Text > Info.MaxLength then
@@ -3474,19 +3474,21 @@ function Library:CreateWindow(...)
         end;
 
         function Tab:ShowTab()
-            for _, Tab in next, Window.Tabs do
-                Tab:HideTab();
+            for _, OtherTab in next, Window.Tabs do
+                if OtherTab ~= Tab then
+                    OtherTab:HideTab();
+                end
             end;
 
-            Library:Tween(Blocker, { BackgroundTransparency = 0 }, 0.2);
-            Library:Tween(TabButton, { BackgroundColor3 = Library.MainColor }, 0.2);
+            Blocker.BackgroundTransparency = 0;
+            TabButton.BackgroundColor3 = Library.MainColor;
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'MainColor';
             TabFrame.Visible = true;
         end;
 
         function Tab:HideTab()
-            Library:Tween(Blocker, { BackgroundTransparency = 1 }, 0.2);
-            Library:Tween(TabButton, { BackgroundColor3 = Library.BackgroundColor }, 0.2);
+            Blocker.BackgroundTransparency = 1;
+            TabButton.BackgroundColor3 = Library.BackgroundColor;
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'BackgroundColor';
             TabFrame.Visible = false;
         end;
