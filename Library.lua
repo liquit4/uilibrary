@@ -3480,15 +3480,15 @@ function Library:CreateWindow(...)
                 end
             end;
 
-            Blocker.BackgroundTransparency = 0;
-            TabButton.BackgroundColor3 = Library.MainColor;
+            Library:Tween(Blocker, { BackgroundTransparency = 0 }, 0.15);
+            Library:Tween(TabButton, { BackgroundColor3 = Library.MainColor }, 0.2);
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'MainColor';
             TabFrame.Visible = true;
         end;
 
         function Tab:HideTab()
-            Blocker.BackgroundTransparency = 1;
-            TabButton.BackgroundColor3 = Library.BackgroundColor;
+            Library:Tween(Blocker, { BackgroundTransparency = 1 }, 0.15);
+            Library:Tween(TabButton, { BackgroundColor3 = Library.BackgroundColor }, 0.2);
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'BackgroundColor';
             TabFrame.Visible = false;
         end;
