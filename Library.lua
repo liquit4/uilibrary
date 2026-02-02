@@ -3481,23 +3481,14 @@ function Library:CreateWindow(...)
             Library:Tween(Blocker, { BackgroundTransparency = 0 }, 0.2);
             Library:Tween(TabButton, { BackgroundColor3 = Library.MainColor }, 0.2);
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'MainColor';
-            
-            -- Fade in tab content
             TabFrame.Visible = true;
-            TabFrame.BackgroundTransparency = 1;
-            Library:Tween(TabFrame, { BackgroundTransparency = 0 }, 0.15);
         end;
 
         function Tab:HideTab()
             Library:Tween(Blocker, { BackgroundTransparency = 1 }, 0.2);
             Library:Tween(TabButton, { BackgroundColor3 = Library.BackgroundColor }, 0.2);
             Library.RegistryMap[TabButton].Properties.BackgroundColor3 = 'BackgroundColor';
-            
-            -- Fade out tab content
-            Library:Tween(TabFrame, { BackgroundTransparency = 1 }, 0.15);
-            task.delay(0.15, function()
-                TabFrame.Visible = false;
-            end);
+            TabFrame.Visible = false;
         end;
 
         function Tab:SetLayoutOrder(Position)
