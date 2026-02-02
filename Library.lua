@@ -2178,14 +2178,14 @@ do
 
         Library:AddCorner(Fill, 4);
 
-        -- Add highly visible animated gradient to slider fill
+        -- Add animated gradient to slider fill (more prominent)
         local FillGradient = Library:Create('UIGradient', {
             Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 50, 120)),
-                ColorSequenceKeypoint.new(0.25, Color3.fromRGB(147, 112, 219)),
-                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-                ColorSequenceKeypoint.new(0.75, Color3.fromRGB(147, 112, 219)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 50, 120))
+                ColorSequenceKeypoint.new(0, Library.AccentColor),
+                ColorSequenceKeypoint.new(0.3, Color3.fromRGB(220, 190, 255)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 220, 255)),
+                ColorSequenceKeypoint.new(0.7, Color3.fromRGB(220, 190, 255)),
+                ColorSequenceKeypoint.new(1, Library.AccentColor)
             });
             Offset = Vector2.new(-1, 0);
             Parent = Fill;
@@ -2193,8 +2193,8 @@ do
 
         task.spawn(function()
             while Fill.Parent do
-                Library:Tween(FillGradient, { Offset = Vector2.new(1, 0) }, 2);
-                task.wait(2);
+                Library:Tween(FillGradient, { Offset = Vector2.new(1, 0) }, 3);
+                task.wait(3);
                 FillGradient.Offset = Vector2.new(-1, 0);
             end
         end);
@@ -3249,44 +3249,7 @@ function Library:CreateWindow(...)
 
     Library:AddCorner(Inner, 5);
 
-    -- Create gradient background frame behind window for animated outline effect
-    local GradientOutlineFrame = Library:Create('Frame', {
-        BackgroundColor3 = Color3.new(1, 1, 1);
-        BorderSizePixel = 0;
-        Position = UDim2.new(0, -3, 0, -3);
-        Size = UDim2.new(1, 6, 1, 6);
-        ZIndex = 0;
-        Parent = Outer;
-    });
-
-    Library:AddCorner(GradientOutlineFrame, 6);
-
-    -- Add animated gradient to background frame
-    local OutlineGradient = Library:Create('UIGradient', {
-        Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Library.AccentColor),
-            ColorSequenceKeypoint.new(0.2, Color3.fromRGB(100, 200, 255)),
-            ColorSequenceKeypoint.new(0.4, Color3.fromRGB(200, 100, 255)),
-            ColorSequenceKeypoint.new(0.6, Color3.fromRGB(255, 150, 200)),
-            ColorSequenceKeypoint.new(0.8, Color3.fromRGB(100, 200, 255)),
-            ColorSequenceKeypoint.new(1, Library.AccentColor)
-        });
-        Rotation = 0;
-        Parent = GradientOutlineFrame;
-    });
-
-    -- Continuous rotation animation for gradient
-    task.spawn(function()
-        while GradientOutlineFrame and GradientOutlineFrame.Parent do
-            Library:Tween(OutlineGradient, { Rotation = 360 }, 6);
-            task.wait(6);
-            if OutlineGradient and OutlineGradient.Parent then
-                OutlineGradient.Rotation = 0;
-            end
-        end
-    end);
-
-    -- Add accent outline to window (simple stroke)
+    -- Add accent outline to window
     local AccentOutline = Library:Create('UIStroke', {
         Color = Library.AccentColor;
         Thickness = 2;
@@ -3295,14 +3258,34 @@ function Library:CreateWindow(...)
         Parent = Inner;
     });
 
-    -- Smooth pulse animation for the outline
+    -- Add animated gradient to outline
+    local OutlineGradient = Library:Create('UIGradient', {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Library.AccentColor),
+            ColorSequenceKeypoint.new(0.25, Color3.fromRGB(200, 170, 255)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 200, 255)),
+            ColorSequenceKeypoint.new(0.75, Color3.fromRGB(200, 170, 255)),
+            ColorSequenceKeypoint.new(1, Library.AccentColor)
+        });
+        Rotation = 0;
+        Parent = AccentOutline;
+    });
+
+    -- Smooth pulse and rotation animation for the outline
     task.spawn(function()
         while AccentOutline and AccentOutline.Parent do
-            Library:Tween(AccentOutline, { Thickness = 2.5, Transparency = 0.3 }, 1.2);
-            task.wait(1.2);
+            -- Pulse thickness
+            Library:Tween(AccentOutline, { Thickness = 2.8, Transparency = 0.2 }, 1.5);
+            -- Rotate gradient
+            Library:Tween(OutlineGradient, { Rotation = 360 }, 8);
+            task.wait(1.5);
             if not AccentOutline or not AccentOutline.Parent then break end
-            Library:Tween(AccentOutline, { Thickness = 2, Transparency = 0 }, 1.2);
-            task.wait(1.2);
+            Library:Tween(AccentOutline, { Thickness = 2, Transparency = 0 }, 1.5);
+            task.wait(1.5);
+            -- Reset rotation for continuous loop
+            if OutlineGradient and OutlineGradient.Parent then
+                OutlineGradient.Rotation = 0;
+            end
         end
     end);
 
